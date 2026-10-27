@@ -4,15 +4,12 @@
 
 O diretorio `sql/` e montado em `/docker-entrypoint-initdb.d` e executado automaticamente quando o volume e criado pela primeira vez:
 
-- `01_schema.sql`: cria o schema relacional transacional `ecommerce`.
-- `02_reference_data.sql`: carrega clientes, enderecos, categorias, marcas, produtos, variantes, armazens e estoque.
-- `03_generate_large_data.sql`: gera 1 milhao de pedidos, aproximadamente 3 milhoes de itens, pagamentos, envios e 10 milhoes de eventos.
-- `04_views_operacionais.sql`: cria views operacionais para detalhes de pedidos e posicao de estoque.
-- `05_indices.sql`: cria indices depois da carga para melhorar as consultas.
+- `01_banco_ecommerce.sql`: cria o schema relacional, carrega os dados, cria indices e valida a conciliacao.
 
 Como os scripts de inicializacao so rodam em um banco vazio, recrie o volume para gerar a base:
 
 ```powershell
+docker compose down -v
 docker compose --env-file ".env" pull
 docker compose --env-file .env up -d
 ```
@@ -29,8 +26,14 @@ Exemplos de consultas:
 
 ```sql
 SET search_path = ecommerce, public;
-SELECT * FROM vw_detalhes_pedidos ORDER BY realizado_em DESC LIMIT 20;
-SELECT * FROM vw_posicao_estoque ORDER BY quantidade_livre ASC LIMIT 20;
+SELECT pedido_id, cliente_id, total_pedido
+FROM pedidos
+ORDER BY realizado_em DESC
+LIMIT 20;
+SELECT armazem_id, variante_id, quantidade_disponivel, quantidade_reservada
+FROM estoque
+ORDER BY quantidade_disponivel ASC
+LIMIT 20;
 SELECT count(*) FROM eventos_clientes;
 ```
 
