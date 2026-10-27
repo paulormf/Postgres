@@ -13,9 +13,8 @@ O diretorio `sql/` e montado em `/docker-entrypoint-initdb.d` e executado automa
 Como os scripts de inicializacao so rodam em um banco vazio, recrie o volume para gerar a base:
 
 ```powershell
-docker compose down -v
+docker compose --env-file ".env" pull
 docker compose --env-file .env up -d
-docker compose logs -f postgres
 ```
 
 O comando `down -v` apaga os dados do volume. Use-o somente para recriar a base ficticia.
