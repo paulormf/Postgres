@@ -175,7 +175,7 @@ SELECT 'Cliente ' || lpad(n::text, 8, '0'), 'cliente' || n || '@example.test',
        timestamp '2020-01-01' + (n % 2400) * interval '1 day' + (n % 86400) * interval '1 second'
 FROM generate_series(1, 200000) AS g(n);
 
-INSERT INTO enderecos_clientes (cliente_id, tipo_endereco, nome_destinatario, cep, rua, numero, complemento, bairro, cidade, estado, padrao, criado_em)
+INSERT INTO enderecos_clientes (cliente_id, tipo_endereco, nome_destinatario, cep, rua, numero, complemento, bairro, cidade, estado, pais, padrao, criado_em)
 SELECT c.cliente_id, 'ENTREGA', c.nome_completo, lpad((10000000 + c.cliente_id)::text, 8, '0'),
        'Rua Principal ' || (c.cliente_id % 500), (1 + c.cliente_id % 9999)::text,
        CASE WHEN c.cliente_id % 4 = 0 THEN 'Apto ' || (1 + c.cliente_id % 900) ELSE NULL END,
